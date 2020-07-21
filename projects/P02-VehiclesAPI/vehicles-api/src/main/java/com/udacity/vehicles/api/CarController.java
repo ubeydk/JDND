@@ -98,8 +98,14 @@ class CarController {
          * TODO: Use the `assembler` on that updated car and return as part of the response.
          *   Update the first line as part of the above implementing.
          */
-        car.setId((id));
-        Car savedCar = carService.save(car);
+        Car storedCar = carService.findById(id);
+        storedCar.setCreatedAt(car.getCreatedAt() != null ? car.getCreatedAt() : storedCar.getCreatedAt());
+        storedCar.setModifiedAt(car.getModifiedAt() != null ? car.getModifiedAt() : storedCar.getModifiedAt());
+        storedCar.setCondition(car.getCondition() != null ? car.getCondition() : storedCar.getCondition());
+        storedCar.setDetails(car.getDetails() != null ? car.getDetails() : storedCar.getDetails());
+        storedCar.setLocation(car.getLocation() != null ? car.getLocation() : storedCar.getLocation());
+        storedCar.setPrice(car.getPrice() != null ? car.getPrice() : storedCar.getPrice());
+        Car savedCar = carService.save(storedCar);
         Resource<Car> resource = assembler.toResource(savedCar);
         return ResponseEntity.ok(resource);
     }
