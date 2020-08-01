@@ -54,11 +54,20 @@ public class UserController {
 		user.setCart(cart);
 		if(createUserRequest.getPassword().length() < 7 ||
 				!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
-			log.info("The following user has failed to be created: " + user.getUsername());
-			return ResponseEntity.badRequest().build();
+			if(createUserRequest.getPassword().length() < 7)
+				log.info("Password is too short to create user for the username: " + user.getUsername());
+			else
+				log.info("Confirmation password does not match the actual password for the username: " + user.getUsername());
+			log.info("The following user has failed to be created: " + user.getUsername());			return ResponseEntity.badRequest().build();
 		}
 		user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
-		userRepository.save(user);
+		try{
+			userRepository.save(user);
+		}catch (Exception e){
+			log.error(e.getMessage());
+			throw e;
+		}
+
 		log.info("The following user has been created succesfully: " + user.getUsername());
 		return ResponseEntity.ok(user);
 	}
